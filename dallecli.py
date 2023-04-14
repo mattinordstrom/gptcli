@@ -11,7 +11,6 @@ with open("secret", "r") as f:
 # Set API endpoint and parameters
 api_url = "https://api.openai.com/v1/images/generations"
 size = "1024x1024"
-response_format = "url"
 
 # Parse command line arguments
 parser = argparse.ArgumentParser()
@@ -22,7 +21,6 @@ prompt = args.prompt
 #prompt = "A red panda drinking coffee in a park"
 
 print(f"\033[90mSize: {size}\033[0m")
-print(f"\033[90mResponse format: {response_format}\033[0m")
 print(" ")
 
 headers = {
@@ -34,8 +32,7 @@ headers = {
 data = {
     "prompt": prompt,
     "size": size,
-    "n": 1,
-    "response_format": response_format
+    "n": 1
 }
 
 # Send request to API
