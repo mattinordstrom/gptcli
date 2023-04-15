@@ -5,6 +5,7 @@
 
 import openai
 import sys
+import argparse
 
 # Load API key from secret file
 with open("secret", "r") as f:
@@ -35,8 +36,17 @@ def chat_with_gpt(prompt):
     return response.choices[0].message['content']
 
 def main():
-    #TODO get first question as arg 1
+    parser = argparse.ArgumentParser()
+    parser.add_argument("prompt", help="The prompt to generate text from", nargs='?')
+
     print("Type 'quit' to exit at any time.\n")
+
+    args = parser.parse_args()
+    prompt=args.prompt
+
+    if prompt:
+        response = chat_with_gpt(prompt)
+        print(f"\033[34mAI\033[0m: {response}\n")
 
     while True:
         prompt = input("\033[33mYou\033[0m: ")
