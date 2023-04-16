@@ -7,6 +7,12 @@ import openai
 import sys
 import argparse
 
+ITALIC = '\033[3m'
+YELLOW = '\033[33m'
+BLUE = '\033[34m'
+GRAY = '\033[90m'
+ENDC = '\033[0m'
+
 # Load API key from secret file
 with open("secret", "r") as f:
     api_key = f.read().strip()
@@ -14,10 +20,10 @@ with open("secret", "r") as f:
 # Set API key and chat model
 openai.api_key = api_key
 model = "gpt-3.5-turbo"
-max_tokens = 500
+max_tokens = 2000
 
-print(f"\033[90mModel engine: {model}\033[0m")
-print(f"\033[90mMax tokens: {max_tokens}\033[0m")
+print(GRAY + f"Model engine: {model}" + ENDC)
+print(GRAY + f"Max tokens: {max_tokens}" + ENDC)
 
 messages = []
 def chat_with_gpt(prompt):
@@ -29,9 +35,11 @@ def chat_with_gpt(prompt):
         max_tokens=max_tokens
     )
 
+    # TODO response.choices[0].message['role']
+    # assistant or system
     messages.append({'role': 'system', 'content': response.choices[0].message['content']})
     
-    print(f"\033[90mPrompt tokens: {response.usage.prompt_tokens} | Compl. tokens: {response.usage.completion_tokens} | Tot. tokens: {response.usage.total_tokens} | Resp. model: {response.model}\033[0m")
+    print(ITALIC + GRAY + f"Prompt tokens: {response.usage.prompt_tokens} | Compl. tokens: {response.usage.completion_tokens} | Tot. tokens: {response.usage.total_tokens} | Resp. model: {response.model}" + ENDC)
 
     return response.choices[0].message['content']
 
@@ -39,25 +47,22 @@ def main():
     parser = argparse.ArgumentParser()
     parser.add_argument("prompt", help="The prompt to generate text from", nargs='?')
 
-    print("Type 'quit' to exit at any time.\n")
+    print("CHAT STARTED!\n")
 
     args = parser.parse_args()
     prompt=args.prompt
 
     if prompt:
         response = chat_with_gpt(prompt)
-        print(f"\033[34mAI\033[0m: {response}\n")
+        print(BLUE + "AI" + ENDC + f": {response}\n")
 
     while True:
-        prompt = input("\033[33mYou\033[0m: ")
+        prompt = input(YELLOW + "You" + ENDC + ": ")
+        
         #prompt = "Name two colors"
 
-        if prompt.lower() == "quit":
-            print("Goodbye!")
-            sys.exit()
-
         response = chat_with_gpt(prompt)
-        print(f"\033[34mAI\033[0m: {response}\n")
+        print(BLUE + "AI" + ENDC + f": {response}\n")
 
 if __name__ == "__main__":
     main()

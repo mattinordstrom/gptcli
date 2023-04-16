@@ -4,6 +4,9 @@ import requests
 import argparse
 import json
 
+GRAY = '\033[90m'
+ENDC = '\033[0m'
+
 # Load API key from secret file
 with open("secret", "r") as f:
     api_key = f.read().strip()
@@ -20,7 +23,7 @@ args = parser.parse_args()
 prompt = args.prompt
 #prompt = "A red panda drinking coffee in a park"
 
-print(f"\033[90mSize: {size}\033[0m")
+print(GRAY + f"Size: {size}" + ENDC)
 print(" ")
 
 headers = {
@@ -43,8 +46,8 @@ image_url = response.json()["data"][0]["url"]
 
 # Download image from URL and save to file
 image_data = requests.get(image_url).content
-with open("output.png", "wb") as f:
-    f.write(image_data)
+with open("output.png", "wb") as outputFile:
+    outputFile.write(image_data)
 
 print(f"URL: {image_url}")
 print(" ")
