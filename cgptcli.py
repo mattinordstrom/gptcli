@@ -48,17 +48,20 @@ def chat_with_gpt(prompt):
 
 # Save history
 ###########################
-    path = 'chathistory/' + datetime.now().strftime("%Y%m%d")
+    path = 'chathistory/' + datetime.now().strftime("%Y_%m_%d")
     dirExist = os.path.exists(path)
     if not dirExist:
         os.makedirs(path)
 
-    firstMessageFormatted = firstMessage[0:40]
+    firstMessageFormatted = firstMessage[0:35]
     firstMessageFormatted = ''.join(e for e in firstMessageFormatted if e.isalnum())
     firstMessageFormatted = firstMessageFormatted.replace("å", "a")
     firstMessageFormatted = firstMessageFormatted.replace("ä", "a")
     firstMessageFormatted = firstMessageFormatted.replace("ö", "o")
-    with open(path + '/' + firstMessageFormatted + '.json', 'w') as outfile:
+
+    filePath = path + '/' + firstMessageFormatted + '_' + datetime.now().strftime("%HH%MM%SS") + '.json' 
+
+    with open(filePath, 'w') as outfile:
         outfile.write(json.dumps(messages))
 #############################
 
