@@ -68,6 +68,7 @@ def chat_with_gpt(prompt):
         firstMessageFormatted = firstMessageFormatted.replace("ö", "o")
 
         filePath = path + '/' + firstMessageFormatted + '_' + datetime.now().strftime("%HH%MM%SS") + '.json' 
+        historyFilePath = filePath.replace("chathistory/", "")
 
     with open(filePath, 'w') as outfile:
         outfile.write(json.dumps(messages))
