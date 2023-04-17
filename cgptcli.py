@@ -27,10 +27,15 @@ max_tokens = 2000
 print(GRAY + f"Model engine: {model}" + ENDC)
 print(GRAY + f"Max tokens: {max_tokens}" + ENDC)
 
+historyFilePath = ''
 firstMessage = ''
 messages = []
+
 def chat_with_gpt(prompt):
     global firstMessage
+    global messages
+    global historyFilePath
+
     if firstMessage == '':
         firstMessage = prompt
 
@@ -46,35 +51,59 @@ def chat_with_gpt(prompt):
     
     print(ITALIC + GRAY + f"Prompt tokens: {response.usage.prompt_tokens} | Compl. tokens: {response.usage.completion_tokens} | Tot. tokens: {response.usage.total_tokens} | Resp. model: {response.model}" + ENDC)
 
-# Save history
-###########################
-    path = 'chathistory/' + datetime.now().strftime("%Y_%m_%d")
-    dirExist = os.path.exists(path)
-    if not dirExist:
-        os.makedirs(path)
+    # Save history
+    ###########################
+    if historyFilePath:
+        filePath = 'chathistory/' + historyFilePath
+    else:
+        path = 'chathistory/' + datetime.now().strftime("%Y_%m_%d")
+        dirExist = os.path.exists(path)
+        if not dirExist:
+            os.makedirs(path)
 
-    firstMessageFormatted = firstMessage[0:35]
-    firstMessageFormatted = ''.join(e for e in firstMessageFormatted if e.isalnum())
-    firstMessageFormatted = firstMessageFormatted.replace("å", "a")
-    firstMessageFormatted = firstMessageFormatted.replace("ä", "a")
-    firstMessageFormatted = firstMessageFormatted.replace("ö", "o")
+        firstMessageFormatted = firstMessage[0:35]
+        firstMessageFormatted = ''.join(e for e in firstMessageFormatted if e.isalnum())
+        firstMessageFormatted = firstMessageFormatted.replace("å", "a")
+        firstMessageFormatted = firstMessageFormatted.replace("ä", "a")
+        firstMessageFormatted = firstMessageFormatted.replace("ö", "o")
 
-    filePath = path + '/' + firstMessageFormatted + '_' + datetime.now().strftime("%HH%MM%SS") + '.json' 
+        filePath = path + '/' + firstMessageFormatted + '_' + datetime.now().strftime("%HH%MM%SS") + '.json' 
 
     with open(filePath, 'w') as outfile:
         outfile.write(json.dumps(messages))
-#############################
+    #############################
 
     return response.choices[0].message['content']
+
+def readHistory(file):
+    global messages
+    global historyFilePath
+
+    historyFilePath = file
+
+    f = open('chathistory/' + file)
+    data = json.load(f)
+    messages = data
+    print("\n")
+    print(messages)
 
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument("prompt", help="The prompt to generate text from", nargs='?')
-
-    print("CHAT STARTED!\n")
+    parser.add_argument('-f', '--file') 
 
     args = parser.parse_args()
     prompt=args.prompt
+    file=args.file
+
+    if file:
+        if prompt:
+            print("ERROR no prompt when loading history file")
+            exit()
+
+        readHistory(file)
+
+    print("\nCHAT STARTED!\n")
 
     if prompt:
         response = chat_with_gpt(prompt)
