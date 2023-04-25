@@ -3,11 +3,11 @@
 # https://platform.openai.com/docs/guides/chat
 # https://platform.openai.com/docs/api-reference/chat/create
 
+import src.utils as utils
 import openai
 import json
 import argparse
 import os
-import re
 import readline
 from datetime import datetime
 
@@ -26,9 +26,6 @@ with open("secret", "r") as f:
 openai.api_key = api_key
 model = "gpt-3.5-turbo"
 max_tokens = 4000
-
-print(GRAY + f"Model engine: {model}" + ENDC)
-print(GRAY + f"Max tokens: {max_tokens}" + ENDC)
 
 historyFilePath = ''
 firstMessage = ''
@@ -91,19 +88,6 @@ def readHistory(file):
     print("\n")
     print(messages)
 
-def getFormattedResponseText(response):    
-    formattedResponse = ''
-    substrings = re.split('(```.*?```)', response, flags=re.DOTALL)
-
-    for substring in substrings:
-        substr = substring
-        if substr.startswith('```'):
-            substr = GREEN + substring + ENDC
-        
-        formattedResponse = formattedResponse + substr
-
-    return formattedResponse
-
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument("prompt", help="The prompt to generate text from", nargs='?')
@@ -120,11 +104,13 @@ def main():
 
         readHistory(file)
 
+    print(GRAY + f"Model engine: {model}" + ENDC)
+    print(GRAY + f"Max tokens: {max_tokens}" + ENDC)
     print("\nCHAT STARTED!\n")
 
     if prompt:
         response = chat_with_gpt(prompt)
-        print(BLUE + "AI" + ENDC + f": {getFormattedResponseText(response)}\n")
+        print(BLUE + "AI" + ENDC + f": {utils.getFormattedResponseText(response)}\n")
 
     while True:
         prompt = input(YELLOW + "You" + ENDC + ": ")
@@ -132,7 +118,7 @@ def main():
         #prompt = "Name two colors"
 
         response = chat_with_gpt(prompt)
-        print(BLUE + "AI" + ENDC + f": {getFormattedResponseText(response)}\n")
+        print(BLUE + "AI" + ENDC + f": {utils.getFormattedResponseText(response)}\n")
 
 if __name__ == "__main__":
     main()
