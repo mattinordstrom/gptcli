@@ -25,7 +25,7 @@ with open("secret", "r") as f:
 # Set API key and chat model
 openai.api_key = api_key
 model = "gpt-3.5-turbo"
-max_tokens = 2000
+max_tokens = 4000
 
 print(GRAY + f"Model engine: {model}" + ENDC)
 print(GRAY + f"Max tokens: {max_tokens}" + ENDC)
