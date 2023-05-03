@@ -25,7 +25,7 @@ with open("secret", "r") as f:
 # Set API key and chat model
 openai.api_key = api_key
 model = "gpt-3.5-turbo"
-max_tokens = 3500
+max_tokens = 3000
 
 historyFilePath = ''
 firstMessage = ''
@@ -54,7 +54,7 @@ def chat_with_gpt(prompt):
     # Save history
     ###########################
     if historyFilePath:
-        filePath = 'chathistory/' + historyFilePath
+        filePath = historyFilePath
     else:
         path = 'chathistory/' + datetime.now().strftime("%Y_%m_%d")
         dirExist = os.path.exists(path)
@@ -68,7 +68,7 @@ def chat_with_gpt(prompt):
         firstMessageFormatted = firstMessageFormatted.replace("ö", "o")
 
         filePath = path + '/' + firstMessageFormatted + '_' + datetime.now().strftime("%HH%MM%SS") + '.json' 
-        historyFilePath = filePath.replace("chathistory/", "")
+        historyFilePath = filePath
 
     with open(filePath, 'w') as outfile:
         outfile.write(json.dumps(messages))
@@ -80,9 +80,10 @@ def readHistory(file):
     global messages
     global historyFilePath
 
+    file = 'chathistory/' + file
     historyFilePath = file
 
-    f = open('chathistory/' + file)
+    f = open(file)
     data = json.load(f)
     messages = data
     print("\n")
@@ -98,6 +99,7 @@ def main():
     file=args.file
 
     if file:
+        file = file.replace("chathistory/", "")
         if prompt:
             print("ERROR no prompt when loading history file")
             exit()
