@@ -8,7 +8,7 @@ import openai
 import json
 import argparse
 import os
-import readline
+from prompt_toolkit import prompt
 from datetime import datetime
 
 ITALIC = '\033[3m'
@@ -33,15 +33,15 @@ historyFilePath = ''
 firstMessage = ''
 messages = []
 
-def chat_with_gpt(prompt):
+def chat_with_gpt(promptInput):
     global firstMessage
     global messages
     global historyFilePath
 
     if firstMessage == '':
-        firstMessage = prompt
+        firstMessage = promptInput
 
-    messages.append({'role': 'user', 'content': prompt})
+    messages.append({'role': 'user', 'content': promptInput})
 
     response = openai.ChatCompletion.create(
         model=model,
@@ -97,12 +97,12 @@ def main():
     parser.add_argument('-f', '--file') 
 
     args = parser.parse_args()
-    prompt=args.prompt
+    promptInput=args.prompt
     file=args.file
 
     if file:
         file = file.replace("chathistory/", "")
-        if prompt:
+        if promptInput:
             print("ERROR no prompt when loading history file")
             exit()
 
@@ -112,16 +112,16 @@ def main():
     print(GRAY + f"Max tokens: {max_tokens}" + ENDC)
     print("\nCHAT STARTED!\n")
 
-    if prompt:
-        response = chat_with_gpt(prompt)
+    if promptInput:
+        response = chat_with_gpt(promptInput)
         print(BLUE + "AI" + ENDC + f": {utils.getFormattedResponseText(response)}\n")
 
     while True:
-        prompt = input(YELLOW + "You" + ENDC + ": ")
+        promptInput = prompt("You: ")
         
-        #prompt = "Name two colors"
+        #promptInput = "Name two colors"
 
-        response = chat_with_gpt(prompt)
+        response = chat_with_gpt(promptInput)
         print(BLUE + "AI" + ENDC + f": {utils.getFormattedResponseText(response)}\n")
 
 if __name__ == "__main__":
