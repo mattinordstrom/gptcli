@@ -24,8 +24,10 @@ with open("secret", "r") as f:
 
 # Set API key and chat model
 openai.api_key = api_key
-model = "gpt-3.5-turbo"
-max_tokens = 3000
+#model = "gpt-3.5-turbo"
+#max_tokens = 3000
+model = "gpt-4"
+max_tokens = 6000
 
 historyFilePath = ''
 firstMessage = ''
